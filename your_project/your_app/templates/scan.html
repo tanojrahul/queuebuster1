@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Scan QR Code{% endblock %}
+{% block content %}
+<div style="max-width: 500px; margin: 50px auto; text-align: center;">
+    <h2>Scan QR Code</h2>
+
+    <div id="qr-reader" style="width: 300px; height: 300px; margin: auto; border: 3px dashed #007bff; display: flex; justify-content: center; align-items: center;">
+        <p>Loading Camera...</p>
+    </div>
+    <div id="qr-reader-results" style="margin-top: 20px; font-weight: bold;"></div>
+
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            // Display the scanned QR code result
+            document.getElementById('qr-reader-results').innerText = `Scanned Product ID: ${decodedText}`;
+
+            // Send the product ID to the server to add the product to the cart
+            fetch("{% url 'scan' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    'product_id': decodedText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Product added to cart!");
+                }
+            });
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'cart' %}">
+            <button style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+                Go to Cart
+            </button>
+        </a>
+    </div>
+</div>
+{% endblock %}

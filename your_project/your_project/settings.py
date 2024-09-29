@@ -27,10 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','smartcart-q25z.onrender.com']
 
+CSRF_TRUSTED_ORIGINS = ['https://smartcart-q25z.onrender.com']
+
 # settings.py
 LOGIN_URL = '/login/'
 
 # Application definition
+
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',

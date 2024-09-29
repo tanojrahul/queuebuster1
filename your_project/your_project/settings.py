@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-s&rx^%vdn%3h_g)h65y_x+n)&(^=+llhkji3rd$fr_2j%buqts
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://smartcart-q25z.onrender.com/','localhost','127.0.0.1']
 
 # settings.py
 LOGIN_URL = '/login/'
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'your_app',
+    # 'django.contrib.messages',
 ]
 
 MIDDLEWARE = [

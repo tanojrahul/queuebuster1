@@ -1,16 +1,11 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
 from .models import CartItem, Product
 
-def home_view(request):
-    return render(request, 'home.html')
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponseRedirect
-
+# Login view
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -18,25 +13,22 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            # Check if 'next' parameter is present in the GET request (from login required redirect)
-            next_url = request.GET.get('next')
-            if next_url:
-                return redirect(next_url)  # Redirect to the page the user tried to access
-            return redirect('scan')  # Redirect to scan page by default after login
+            messages.success(request, 'Login successful!')
+            return redirect('scan')
+        else:
+            messages.error(request, 'Invalid username or password!')
     return render(request, 'login.html')
 
-
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  # Import the messages framework
-
+# Register view
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            # Show a success message
-            messages.success(request, 'Registration successful. Please log in.')
-            return redirect('login')  # Redirect to login after successful registration
+            messages.success(request, 'Registration successful! You can now log in.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Registration failed. Please try again.')
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
@@ -86,3 +78,8 @@ def scan_view(request):
         cart_item.save()
         return JsonResponse({'success': True})
     return render(request, 'scan.html')
+
+from django.shortcuts import render
+
+def home_view(request):
+    return render(request, 'home.html')

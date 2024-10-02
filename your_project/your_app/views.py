@@ -170,6 +170,13 @@ def manage_products(request):
     return render(request, 'admin/manage_products.html', {'products': products})
 
 
+
+def remove_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    product.delete()
+    return redirect('manage_products')
+
+
 @login_required
 def add_product_scan(request):
     if request.method == 'POST':

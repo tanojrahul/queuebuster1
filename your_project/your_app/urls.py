@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin1/add-product/<str:barcode>/', views.add_product_view, name='add_product'),  # Add product with barcode
     path('remove_from_cart/<int:item_id>/', remove_from_cart, name='remove_from_cart'),
     path('checkout/', checkout_view, name='checkout'),
+    path('admin1/remove-product/<int:product_id>/', views.remove_product, name='remove_product'),
 
 ]
 

@@ -1,68 +1,81 @@
 {% extends 'base.html' %}
 {% block title %}Checkout{% endblock %}
 {% block content %}
-<div style="max-width: 600px; margin: 50px auto; text-align: center;">
-    <h2>Checkout</h2>
+<div style="max-width: 600px; margin: 50px auto; text-align: center; border: 1px solid #ddd; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="font-size: 2em; margin-bottom: 20px; color: #333;">Checkout</h2>
 
-    <h3>Your Cart Items</h3>
+    <h3 style="color: #007bff;">Your Cart Items</h3>
     {% if cart_items %}
-    <table style="width: 100%; text-align: left; margin-bottom: 20px;">
+    <table style="width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
             <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price (₹)</th>  <!-- INR symbol -->
+                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Product</th>
+                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Quantity</th>
+                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Price (₹)</th>  <!-- INR symbol -->
             </tr>
         </thead>
         <tbody>
             {% for item in cart_items %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>₹{{ item.subtotal }}</td>  <!-- Subtotal in INR -->
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px;">{{ item.product.name }}</td>
+                <td style="padding: 10px;">{{ item.quantity }}</td>
+                <td style="padding: 10px;">₹{{ item.subtotal }}</td>  <!-- Subtotal in INR -->
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <p>Total Amount: ₹{{ total_price }}</p>  <!-- Total price in INR -->
-    
-    <h3>Payment Information</h3>
-    <form method="POST" action="{% url 'process_checkout' %}">
+    <p style="font-size: 1.5em; font-weight: bold;">Total Amount: ₹{{ total_price }}</p>  <!-- Total price in INR -->
+
+    <h3 style="color: #007bff;">Payment Information</h3>
+    <form method="POST" action="{% url 'process_checkout' %}" style="text-align: left;">
         {% csrf_token %}
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="name">Full Name:</label>
-            <input type="text" id="name" name="name" required>
+            <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="address">Address:</label>
-            <textarea id="address" name="address" required></textarea>
+            <textarea id="address" name="address" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         </div>
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="card_number">Card Number:</label>
-            <input type="text" id="card_number" name="card_number" required>
+            <input type="text" id="card_number" name="card_number" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="expiry_date">Expiry Date:</label>
-            <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required>
+            <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="cvv">CVV:</label>
-            <input type="text" id="cvv" name="cvv" required>
+            <input type="text" id="cvv" name="cvv" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
         <div style="margin-top: 20px;">
-            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
                 Complete Purchase
             </button>
         </div>
     </form>
     {% else %}
-    <p>Your cart is empty. Please add products to your cart before proceeding to checkout.</p>
+    <p style="color: #666;">Your cart is empty. Please add products to your cart before proceeding to checkout.</p>
     <a href="{% url 'scan' %}">
-        <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+        <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             Scan Products
         </button>
     </a>
     {% endif %}
 </div>
+
+<!-- Optional JavaScript for enhancing interactivity -->
+<script>
+    // Add event listeners for buttons to enhance user experience
+    const completePurchaseButton = document.querySelector('button[type="submit"]');
+    completePurchaseButton.addEventListener('mouseover', () => {
+        completePurchaseButton.style.backgroundColor = '#218838'; // Darker green on hover
+    });
+    completePurchaseButton.addEventListener('mouseout', () => {
+        completePurchaseButton.style.backgroundColor = '#28a745'; // Original green
+    });
+</script>
+
 {% endblock %}

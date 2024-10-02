@@ -210,10 +210,27 @@ def admin_scan_view(request):
     return render(request, 'admin/admin_scan.html')
 
 
-def add_product_view(request, barcode):
-    barcode = barcode.strip()
 
-    product = get_object_or_404(Product, barcode=barcode)
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Product  # Use your actual Product model
+from .forms import ProductForm  # Assuming you have a form for adding products
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Product  # Use your actual Product model
+from .forms import ProductForm  # Assuming you have a form for adding products
+
+
+def add_product_view(request, barcode):
+    barcode = barcode.strip()  # Clean up any spaces around the barcode
+
+    # Check if the product with the barcode exists
+    try:
+        product = Product.objects.get(barcode=barcode)
+        product_exists = True
+    except Product.DoesNotExist:
+        product = None
+        product_exists = False
 
     if request.method == 'POST':
         product_name = request.POST.get('product_name')
@@ -221,25 +238,29 @@ def add_product_view(request, barcode):
         price = request.POST.get('price')
         quantity = request.POST.get('quantity')
 
-        # Check if a product with the same barcode already exists
-        product, created = Product.objects.get_or_create(
-            barcode=barcode,
-            defaults={
-                'name': product_name,
-                'description': description,
-                'price': price,
-                'quantity': quantity,
-            }
-        )
-
-        if not created:
+        # Create a new product if it doesn't exist, otherwise update the existing one
+        if not product_exists:
+            product = Product.objects.create(
+                barcode=barcode,
+                name=product_name,
+                description=description,
+                price=price,
+                quantity=quantity,
+            )
+            messages.success(request, 'New product added successfully!')
+        else:
             product.name = product_name
             product.description = description
             product.price = price
             product.quantity = quantity
             product.save()
+            messages.success(request, 'Product updated successfully!')
 
-        messages.success(request, 'Product added/updated successfully!')
-        return redirect('admin_scan')
+        return redirect('admin_scan')  # Redirect to admin scan after adding/updating
 
-    return render(request, 'admin/admin_add_product.html', {'barcode': barcode})
+    # Render the form with product details if it exists, otherwise empty form
+    return render(request, 'admin/admin_add_product.html', {
+        'barcode': barcode,
+        'product': product,
+        'product_exists': product_exists,
+    })

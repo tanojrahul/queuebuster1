@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-s&rx^%vdn%3h_g)h65y_x+n)&(^=+llhkji3rd$fr_2j%buqts
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','smartcart-q25z.onrender.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','smartcart-q25z.onrender.com','queuebuster.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = ['https://smartcart-q25z.onrender.com']
 

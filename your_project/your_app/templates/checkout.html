@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto; text-align: center;">
+    <h2>Checkout</h2>
+
+    <h3>Your Cart Items</h3>
+    {% if cart_items %}
+    <table style="width: 100%; text-align: left; margin-bottom: 20px;">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price (₹)</th>  <!-- INR symbol -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ item.subtotal }}</td>  <!-- Subtotal in INR -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>Total Amount: ₹{{ total_price }}</p>  <!-- Total price in INR -->
+    
+    <h3>Payment Information</h3>
+    <form method="POST" action="{% url 'process_checkout' %}">
+        {% csrf_token %}
+        <div>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required></textarea>
+        </div>
+        <div>
+            <label for="card_number">Card Number:</label>
+            <input type="text" id="card_number" name="card_number" required>
+        </div>
+        <div>
+            <label for="expiry_date">Expiry Date:</label>
+            <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required>
+        </div>
+        <div>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" required>
+        </div>
+        <div style="margin-top: 20px;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+                Complete Purchase
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <p>Your cart is empty. Please add products to your cart before proceeding to checkout.</p>
+    <a href="{% url 'scan' %}">
+        <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            Scan Products
+        </button>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

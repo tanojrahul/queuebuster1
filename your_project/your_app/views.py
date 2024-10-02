@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from .models import CartItem, Product, Cart  # Make sure Cart is imported
+from .models import CartItem, Product, Cart  # Ensure Cart is imported
 from django.contrib.auth.decorators import login_required
 
 
@@ -50,21 +50,15 @@ def add_to_cart(request, product_id):
 
     return redirect('cart')
 
-from django.shortcuts import redirect
 
-# @login_required
+@login_required
 def cart_view(request):
-    if not request.user.is_authenticated:
-        return redirect('login')  # Redirect to the login page if not authenticated
     cart = Cart.objects.filter(user=request.user).first()
     if not cart:
         return HttpResponse("Your cart is empty!!")
-    cart = Cart.objects.get(user=request.user)  # This line may cause the error
+
     cart_items = CartItem.objects.filter(cart=cart)
-    subtotal = sum(item.subtotal() for item in cart_items)  # Calculate subtotal
-    from django.shortcuts import redirect
-
-
+    subtotal = sum(item.subtotal() for item in cart_items)
 
     return render(request, 'cart.html', {'cart_items': cart_items, 'subtotal': subtotal})
 
@@ -74,7 +68,7 @@ def scan_view(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         product = Product.objects.get(id=product_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)  # Get or create the cart
+        cart, created = Cart.objects.get_or_create(user=request.user)
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
         if not created:
@@ -86,3 +80,4 @@ def scan_view(request):
 
 def home_view(request):
     return render(request, 'home.html')
+

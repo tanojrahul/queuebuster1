@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','smartcart-q25z.onrender.com','queuebuster.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://smartcart-q25z.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://smartcart-q25z.onrender.com','https://queuebuster.onrender.com']
 
 # settings.py
 LOGIN_URL = '/login/'

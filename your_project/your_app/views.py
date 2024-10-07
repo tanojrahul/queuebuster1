@@ -3,16 +3,22 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import CartItem, Product, Cart  # Ensure Cart is imported
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from .models import CartItem, Product, Cart  # Ensure Cart is imported
 
 ADMIN_USERNAMES = ['admin1', 'admin2']  # Add your admin usernames here
 
 
 # Function to check if the user is an admin
 def is_admin(user):
-    return user.username in ADMIN_USERNAMES  # Add your admin usernames here
+    return user.username in ADMIN_USERNAMES
+
+
+# Utility function to get or create a cart for a user
+def get_or_create_cart(user):
+    cart, created = Cart.objects.get_or_create(user=user)
+    return cart
 
 
 # Login view (redirect based on user type)
@@ -74,7 +80,7 @@ def register_view(request):
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     # Create or update the cart item
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart = get_or_create_cart(request.user)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
     if not created:
@@ -86,13 +92,13 @@ def add_to_cart(request, product_id):
 
 @login_required
 def cart_view(request):
-    cart = Cart.objects.filter(user=request.user).first()
-    if not cart:
+    cart = get_or_create_cart(request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    if not cart_items.exists():
         return HttpResponse("Your cart is empty!")
 
-    cart_items = CartItem.objects.filter(cart=cart)
     subtotal = sum(item.subtotal() for item in cart_items)
-
     return render(request, 'cart.html', {'cart_items': cart_items, 'subtotal': subtotal})
 
 
@@ -102,7 +108,7 @@ def scan_view(request):
         product_id = request.POST.get('product_id')
         try:
             product = Product.objects.get(barcode=product_id)  # Assuming barcode is used
-            cart, created = Cart.objects.get_or_create(user=request.user)
+            cart = get_or_create_cart(request.user)
             cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
             if not created:
@@ -136,21 +142,17 @@ def product_management(request):
     return render(request, 'admin/product_management.html', {'products': products})
 
 
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def checkout_view(request):
     # Implement your checkout logic here
-    # For example, you can render a checkout template or process payment
-    return render(request, 'checkout.html')  # Replace with your actual checkout template
+    return render(request, 'checkout.html')
 
 
 @login_required
 def manage_users(request):
     users = User.objects.all()
     return render(request, 'admin/manage_users.html', {'users': users})
+
 
 @login_required
 def remove_from_cart(request, item_id):
@@ -161,7 +163,7 @@ def remove_from_cart(request, item_id):
     except CartItem.DoesNotExist:
         messages.error(request, 'Item not found in cart.')
 
-    return redirect('cart')  # Redirect to the cart page after removal
+    return redirect('cart')
 
 
 @login_required
@@ -170,10 +172,11 @@ def manage_products(request):
     return render(request, 'admin/manage_products.html', {'products': products})
 
 
-
+@login_required
 def remove_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product.delete()
+    messages.success(request, f'Product "{product.name}" removed successfully!')
     return redirect('manage_products')
 
 
@@ -197,28 +200,13 @@ def logout_view(request):
     return redirect('login')  # Redirect to the login page after logout
 
 
+@login_required
 def admin_scan_view(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
-
-        try:
-            # Redirect to product detail page after scan
-            return redirect('admin_add_product', product_id=product_id)
-        except Product.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Product not found.'}, status=404)
+        return redirect('admin_add_product', product_id=product_id)
 
     return render(request, 'admin/admin_scan.html')
-
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product  # Use your actual Product model
-from .forms import ProductForm  # Assuming you have a form for adding products
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from .models import Product  # Use your actual Product model
-from .forms import ProductForm  # Assuming you have a form for adding products
 
 
 def add_product_view(request, barcode):
@@ -258,9 +246,16 @@ def add_product_view(request, barcode):
 
         return redirect('admin_scan')  # Redirect to admin scan after adding/updating
 
-    # Render the form with product details if it exists, otherwise empty form
     return render(request, 'admin/admin_add_product.html', {
         'barcode': barcode,
         'product': product,
         'product_exists': product_exists,
     })
+
+
+def contact_view(request):
+    return render(request, 'contact.html')  # Make sure you have a 'contact.html' template
+
+
+def terms_conditions_view(request):
+    return render(request, 'terms_conditions.html')  # Make sure you have a 'terms_conditions.html' template

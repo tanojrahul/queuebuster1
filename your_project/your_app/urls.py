@@ -1,9 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-from .views import remove_from_cart  # Import the view
-from .views import checkout_view  # Import the view
-
+from .views import remove_from_cart, checkout_view  # Import views
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),  # User login
@@ -19,9 +17,10 @@ urlpatterns = [
     path('admin1/add_product_scan/', views.add_product_scan, name='add_product_scan'),  # Add product by scan
     path('logout/', views.logout_view, name='logout'),  # Logout user
     path('admin1/add-product/<str:barcode>/', views.add_product_view, name='add_product'),  # Add product with barcode
-    path('remove_from_cart/<int:item_id>/', remove_from_cart, name='remove_from_cart'),
-    path('checkout/', checkout_view, name='checkout'),
-    path('admin1/remove-product/<int:product_id>/', views.remove_product, name='remove_product'),
-
+    path('remove_from_cart/<int:item_id>/', remove_from_cart, name='remove_from_cart'),  # Remove item from cart
+    path('checkout/', checkout_view, name='checkout'),  # Checkout view
+    path('admin1/remove-product/<int:product_id>/', views.remove_product, name='remove_product'),  # Remove product
+    path('contact/', views.contact_view, name='contact'),  # Contact page
+    path('terms/', views.terms_conditions_view, name='terms_conditions'),  # Terms and conditions page
 ]
 

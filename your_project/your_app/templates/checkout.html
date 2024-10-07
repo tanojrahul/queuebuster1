@@ -11,7 +11,7 @@
             <tr>
                 <th style="padding: 10px; border-bottom: 2px solid #007bff;">Product</th>
                 <th style="padding: 10px; border-bottom: 2px solid #007bff;">Quantity</th>
-                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Price (₹)</th>  <!-- INR symbol -->
+                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Price (₹)</th>
             </tr>
         </thead>
         <tbody>
@@ -19,16 +19,16 @@
             <tr style="border-bottom: 1px solid #ddd;">
                 <td style="padding: 10px;">{{ item.product.name }}</td>
                 <td style="padding: 10px;">{{ item.quantity }}</td>
-                <td style="padding: 10px;">₹{{ item.subtotal }}</td>  <!-- Subtotal in INR -->
+                <td style="padding: 10px;">₹{{ item.subtotal }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <p style="font-size: 1.5em; font-weight: bold;">Total Amount: ₹{{ total_price }}</p>  <!-- Total price in INR -->
+    <p style="font-size: 1.5em; font-weight: bold;">Total Amount: ₹{{ total_price }}</p>
 
     <h3 style="color: #007bff;">Payment Information</h3>
-    <form method="POST" action="{% url 'process_checkout' %}" style="text-align: left;">
+    <form method="POST" action="{% url 'create_payment_order' %}" style="text-align: left;">
         {% csrf_token %}
         <div style="margin-bottom: 15px;">
             <label for="name">Full Name:</label>
@@ -39,20 +39,16 @@
             <textarea id="address" name="address" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;"></textarea>
         </div>
         <div style="margin-bottom: 15px;">
-            <label for="card_number">Card Number:</label>
-            <input type="text" id="card_number" name="card_number" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
         <div style="margin-bottom: 15px;">
-            <label for="expiry_date">Expiry Date:</label>
-            <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
-        </div>
-        <div style="margin-bottom: 15px;">
-            <label for="cvv">CVV:</label>
-            <input type="text" id="cvv" name="cvv" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
         </div>
         <div style="margin-top: 20px;">
             <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-                Complete Purchase
+                Proceed to Payment
             </button>
         </div>
     </form>

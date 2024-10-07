@@ -32,6 +32,11 @@ CSRF_TRUSTED_ORIGINS = ['https://smartcart-q25z.onrender.com','https://queuebust
 # settings.py
 LOGIN_URL = '/login/'
 
+CASHFREE_APP_ID = 'your_app_id'  # Replace with your Cashfree App ID
+CASHFREE_SECRET_KEY = 'your_secret_key'  # Replace with your Cashfree Secret Key
+CASHFREE_API_URL = 'https://test.cashfree.com/api/v1/'  # Use the test URL
+
+
 # Application definition
 
 # SECURE_SSL_REDIRECT = True
